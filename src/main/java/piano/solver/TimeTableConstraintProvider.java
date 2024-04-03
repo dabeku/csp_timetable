@@ -26,11 +26,8 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
         return new Constraint[] {
                 noOverlapConstraint(constraintFactory),
                 possibleTimeAndPlaceConstraint(constraintFactory),
-                locationChangeBreakConstraint(constraintFactory),
-                // Hard constraints
-                //roomConflict(constraintFactory),
-                //teacherConflict(constraintFactory),
-                // Soft constraints
+                //locationChangeBreakConstraint(constraintFactory),
+
                 locationStabilityConstraint(constraintFactory),
                 consecutiveLessonsConstraint(constraintFactory),
         };
@@ -43,19 +40,6 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
      * is not allowed.
      */
     Constraint noOverlapConstraint(ConstraintFactory constraintFactory) {
-        /*return constraintFactory
-                .forEachUniquePair(Lesson.class,
-                        Joiners.equal((lesson) -> lesson.getTimeslot().getDayOfWeek()))
-                .filter((lesson1, lesson2) -> {
-                    int durationInMin = Global.durations.get(lesson1.getStudent());
-
-                    Duration between = Duration.between(lesson1.getTimeslot().getStartTime().plusMinutes(durationInMin),
-                            lesson2.getTimeslot().getStartTime());
-                    return between.compareTo(Duration.ofMinutes(0)) == 0;
-                })
-                .reward(HardSoftScore.ONE_HARD)
-                .asConstraint("Teacher time efficiency");*/
-
         return constraintFactory
                 .forEach(Lesson.class)
                         .groupBy(l ->l.getTimeslot().getDayOfWeek(), toList())
@@ -88,8 +72,8 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
     /**
      * Hard: Every lesson of a student must be within possible time and location
-     * - Pia, MO, Rankweil, 14:00-16:00
-     * Lesson must be between 14:00 and 16:00 and be located in Rankweil
+     * - Hannes, MO, Innsbruck, 14:00-16:00
+     * Lesson must be between 14:00 and 16:00 and be located in Innsbruck
      */
     Constraint possibleTimeAndPlaceConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory
@@ -121,16 +105,6 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                                         isTimePossible = true;
                                     }
                                 }
-
-                                /*if (!lesson.getTimeslot().getDayOfWeek().equals(c.timeSlot.getDayOfWeek())) {
-                                    penalty++;
-                                }
-                                if (lesson.getTimeslot().getStartTime().isBefore(c.timeSlot.getStartTime())) {
-                                    penalty++;
-                                }
-                                if (lesson.getTimeslot().getStartTime().plusMinutes(durationInMin).isAfter(c.timeSlot.getEndTime())) {
-                                    penalty++;
-                                }*/
                             }
                         }
 
@@ -142,30 +116,6 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                     return penalty;
                 })
                 .asConstraint("possible time efficiency");
-    }
-
-    Constraint roomConflict(ConstraintFactory constraintFactory) {
-        // A room can accommodate at most one lesson at the same time.
-        return constraintFactory
-                // Select each pair of 2 different lessons ...
-                .forEachUniquePair(Lesson.class,
-                        // ... in the same timeslot ...
-                        Joiners.equal(Lesson::getTimeslot),
-                        // ... in the same room ...
-                        Joiners.equal(Lesson::getRoom))
-                // ... and penalize each pair with a hard weight.
-                .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint("Room conflict");
-    }
-
-    Constraint teacherConflict(ConstraintFactory constraintFactory) {
-        // A teacher can teach at most one lesson at the same time.
-        return constraintFactory
-                .forEachUniquePair(Lesson.class,
-                        Joiners.equal(Lesson::getTimeslot),
-                        Joiners.equal(Lesson::getStudent))
-                .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint("Teacher conflict");
     }
 
     Constraint locationChangeBreakConstraint(ConstraintFactory constraintFactory) {
@@ -249,19 +199,6 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
      * Reward lessons that are consecutive: Lessons with no gap are rewarded
      */
     Constraint consecutiveLessonsConstraint(ConstraintFactory constraintFactory) {
-        // A teacher prefers to teach sequential lessons and dislikes gaps between lessons.
-        /*return constraintFactory
-                .forEach(Lesson.class)
-                .join(Lesson.class, Joiners.lessThan(l -> l.getTimeslot().getStartTime()),
-                        Joiners.equal((lesson) -> lesson.getTimeslot().getDayOfWeek()))
-                .filter((lesson1, lesson2) -> {
-                    int durationInMin = Global.durations.get(lesson1.getStudent());
-                    Duration between = Duration.between(lesson1.getTimeslot().getStartTime().plusMinutes(durationInMin),
-                            lesson2.getTimeslot().getStartTime());
-                    return !between.isNegative() && between.compareTo(Duration.ofMinutes(0)) <= 0;
-                })
-                .reward(HardSoftScore.ONE_SOFT)
-                .asConstraint("Teacher time efficiency2");*/
 
         return constraintFactory
                 .forEach(Lesson.class)
