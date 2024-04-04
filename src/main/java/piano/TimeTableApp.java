@@ -47,12 +47,9 @@ public class TimeTableApp {
         // Solve the problem
         Solver<TimeTable> solver = solverFactory.buildSolver();
 
-        solver.addEventListener(new SolverEventListener<TimeTable>() {
-            @Override
-            public void bestSolutionChanged(BestSolutionChangedEvent<TimeTable> bestSolutionChangedEvent) {
-                printTimetableFile(bestSolutionChangedEvent.getNewBestSolution());
-                LOGGER.info("Score: " + bestSolutionChangedEvent.getNewBestScore());
-            }
+        solver.addEventListener(bestSolutionChangedEvent -> {
+            printTimetableFile(bestSolutionChangedEvent.getNewBestSolution());
+            LOGGER.info("Score: " + bestSolutionChangedEvent.getNewBestScore());
         });
 
         TimeTable solution = solver.solve(problem);
