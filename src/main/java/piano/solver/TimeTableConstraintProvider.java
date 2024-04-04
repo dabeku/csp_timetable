@@ -24,10 +24,12 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
+                // Hard
                 noOverlapConstraint(constraintFactory),
                 possibleTimeAndPlaceConstraint(constraintFactory),
                 //locationChangeBreakConstraint(constraintFactory),
 
+                // Soft
                 locationStabilityConstraint(constraintFactory),
                 consecutiveLessonsConstraint(constraintFactory),
         };
@@ -56,18 +58,16 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                         Lesson nextLesson = lessons.get(i+1);
                         int durationInMin = Global.durations.get(lesson.getStudent());
 
-                        if (lesson.getTimeslot().getStartTime().equals(nextLesson.getTimeslot().getStartTime())) {
-                            penalty++;
-                            continue;
-                        }
+                        /*
+                         * 08:30 + 30min > 08:45
+                         */
                         if (lesson.getTimeslot().getStartTime().plusMinutes(durationInMin).isAfter(nextLesson.getTimeslot().getStartTime())) {
                             penalty++;
-                            continue;
                         }
                     }
                     return penalty;
                 })
-                .asConstraint("Teacher time efficiency");
+                .asConstraint("noOverlapConstraint");
     }
 
     /**
@@ -91,7 +91,9 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                         Lesson lesson = lessons.get(i);
                         Room location = lesson.getRoom();
                         DayOfWeek day = lesson.getTimeslot().getDayOfWeek();
+                        // Contains possible (multiple) time ranges (per day) + location a student 'has time'
                         List<Combination> combinations = Global.map.get(lesson.getStudent());
+                        // Duration in min of a single student
                         int durationInMin = Global.durations.get(lesson.getStudent());
 
                         boolean isTimePossible = false;
@@ -102,6 +104,7 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                                 if (c.timeSlot.getDayOfWeek().equals(day)) {
                                     if (!lesson.getTimeslot().getStartTime().isBefore(c.timeSlot.getStartTime()) &&
                                             !lesson.getTimeslot().getStartTime().plusMinutes(durationInMin).isAfter(c.timeSlot.getEndTime())) {
+                                        // Day + time + place are possible
                                         isTimePossible = true;
                                     }
                                 }
@@ -110,12 +113,11 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 
                         if (!isTimePossible) {
                             penalty++;
-                            continue;
                         }
                     }
                     return penalty;
                 })
-                .asConstraint("possible time efficiency");
+                .asConstraint("possibleTimeAndPlaceConstraint");
     }
 
     Constraint locationChangeBreakConstraint(ConstraintFactory constraintFactory) {
@@ -158,7 +160,7 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                     }
                     return penalty;
                 })
-                .asConstraint("Teacher time stabil 2222");
+                .asConstraint("locationChangeBreakConstraint");
     }
 
     /**
@@ -192,7 +194,7 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                     }
                     return 0;
                 })
-                .asConstraint("Teacher time stabil");
+                .asConstraint("locationStabilityConstraint");
     }
 
     /**
@@ -226,6 +228,6 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
                     }
                     return reward;
                 })
-                .asConstraint("Teacher time efficiency2");
+                .asConstraint("consecutiveLessonsConstraint");
     }
 }
