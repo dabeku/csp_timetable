@@ -37,7 +37,7 @@ public class TimeTableApp {
                 // It's recommended to run for at least 5 minutes ("5m") otherwise.
                 //.withTerminationSpentLimit(Duration.ofHours(9));
                 .withTerminationSpentLimit(Duration.ofSeconds(3));
-        config.setEnvironmentMode(EnvironmentMode.NON_REPRODUCIBLE);
+        config.setEnvironmentMode(EnvironmentMode.REPRODUCIBLE);
 
         SolverFactory<TimeTable> solverFactory = SolverFactory.create(config);
 
