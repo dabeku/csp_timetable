@@ -25,13 +25,13 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 // Hard
-                noOverlapConstraint(constraintFactory),
-                possibleTimeAndPlaceConstraint(constraintFactory),
+//                noOverlapConstraint(constraintFactory),
+//                possibleTimeAndPlaceConstraint(constraintFactory),
                 //locationChangeBreakConstraint(constraintFactory),
 
                 // Soft
-                locationStabilityConstraint(constraintFactory),
-                consecutiveLessonsConstraint(constraintFactory),
+//                locationStabilityConstraint(constraintFactory),
+//                consecutiveLessonsConstraint(constraintFactory),
         };
     }
 

@@ -1,12 +1,17 @@
 +Thomas
 .30
--Innsbruck
-MO 11:00-12:30
+-Sistrans
+MO 11:00-15:30
 
 +Britta
 .30
 -Innsbruck
 MO 09:35-12:30
+
++Peter
+.30
+-Innsbruck
+MO 11:00-15:30
 
 +Hannes
 .30
