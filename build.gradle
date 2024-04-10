@@ -5,8 +5,6 @@ plugins {
 
 def timefoldVersion = "1.4.0"
 def logbackVersion = "1.4.11"
-def junitJupiterVersion = "5.10.0"
-def assertjVersion = "3.24.2"
 
 group = "org.acme"
 version = "1.0-SNAPSHOT"
@@ -19,9 +17,6 @@ repositories {
 dependencies {
     implementation platform("ai.timefold.solver:timefold-solver-bom:${timefoldVersion}")
     implementation "ai.timefold.solver:timefold-solver-core"
-    testImplementation "ai.timefold.solver:timefold-solver-test"
-    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
-    testImplementation "org.assertj:assertj-core:${assertjVersion}"
 
     runtimeOnly "ch.qos.logback:logback-classic:${logbackVersion}"
 }
@@ -36,19 +31,6 @@ compileJava {
     options.compilerArgs << "-parameters"
 }
 
-compileTestJava {
-    options.encoding = "UTF-8"
-}
-
 application {
     mainClass = "org.acme.schooltimetabling.TimeTableApp"
-}
-
-test {
-    // Log the test execution results.
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
-
-    useJUnitPlatform()
 }
