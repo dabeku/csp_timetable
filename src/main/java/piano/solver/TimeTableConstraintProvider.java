@@ -4,17 +4,14 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
-import ai.timefold.solver.core.api.score.stream.Joiners;
 import piano.Combination;
 import piano.Global;
 import piano.domain.Lesson;
 import piano.domain.Room;
-import piano.domain.Timeslot;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.Comparator;
 import java.util.List;
 
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.toList;
